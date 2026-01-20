@@ -1,29 +1,24 @@
 #include "MainComponent.h"
 
-//==============================================================================
 MainComponent::MainComponent()
 {
-    setSize (600, 400);
+	setSize(400, 300);
 }
 
-MainComponent::~MainComponent()
+void MainComponent::paint(juce::Graphics& g)
 {
-}
+	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+	g.setFont(juce::Font("Times New Roman", 20.0f, juce::Font::italic));
+	g.setColour(juce::Colours::white);
+	g.drawText(currentSizeAsString, getLocalBounds(),juce::Justification::centred, true);
 
-//==============================================================================
-void MainComponent::paint (juce::Graphics& g)
-{
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setFont (juce::FontOptions (16.0f));
-    g.setColour (juce::Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
+	g.drawEllipse(10, 10, 60, 30,3);
 }
 
 void MainComponent::resized()
 {
-    // This is called when the MainComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+	// This is called when the MainComponent is resized.
+	// If you add any child components, this is where you should
+	// update their positions.
+	currentSizeAsString = juce::String(getWidth()) + "x" + juce::String(getHeight());
 }
