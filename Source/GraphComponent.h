@@ -36,6 +36,8 @@ private:
 
 	double eval(double t) const;
 
+	juce::Rectangle<float> getPlotRect() const;
+
 	static juce::Point<float> worldToScreen(double xW, double yW, juce::Rectangle<float> plot);
 	static double screenToWorldY(float yScreen, juce::Rectangle<float> plot);
 

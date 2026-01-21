@@ -1,5 +1,10 @@
 #include "GraphComponent.h"
 
+static constexpr float plotPaddingLeft = 40.0f;
+static constexpr float plotPaddingRight = 30.0f;
+static constexpr float plotPaddingTop = 30.0f;
+static constexpr float plotPaddingBottom = 40.0f;
+
 GraphComponent::GraphComponent()
 {
 	setWantsKeyboardFocus(true);
@@ -59,6 +64,17 @@ double GraphComponent::eval(double t) const
 	}
 
 	return sum;
+}
+
+// Helper function that will allow re-sizing everywhere without breaking inputs
+juce::Rectangle<float> GraphComponent::getPlotRect() const
+{
+	auto bounds = getLocalBounds().toFloat();
+
+	return bounds.withTrimmedLeft(plotPaddingLeft)
+		.withTrimmedRight(plotPaddingRight)
+		.withTrimmedTop(plotPaddingTop)
+		.withTrimmedBottom(plotPaddingBottom);
 }
 
 juce::Point<float> GraphComponent::worldToScreen(double xW, double yW, juce::Rectangle<float> plot)
@@ -123,7 +139,7 @@ void GraphComponent::drawAxes(juce::Graphics& g, juce::Rectangle<float> plot)
 
 	// graph labels
 	g.setColour(juce::Colours::lightgrey);
-	g.setFont(12.0f);
+	g.setFont(15.0f);
 	g.drawText("t = 0", static_cast<int>(plot.getX()) + 2, yLabel, 40, labelH, juce::Justification::left);
 	g.drawText("t = 1", static_cast<int>(plot.getRight()) - 42, yLabel, 40, labelH, juce::Justification::right);
 	g.drawText("t = 3", static_cast<int>(plot.getX()) + 2, static_cast<int>(plot.getY()) - 18, 40, 16, juce::Justification::left);
@@ -170,8 +186,7 @@ void GraphComponent::paint(juce::Graphics& g)
 {
 	g.fillAll(juce::Colours::black);
 
-	auto bounds = getLocalBounds().toFloat();
-	auto plot = bounds.reduced(10.0f); // To fix UI related issues by reducing margins
+	auto plot = getPlotRect();
 
 	drawAxes(g, plot);
 	drawCurve(g, plot);
@@ -180,7 +195,7 @@ void GraphComponent::paint(juce::Graphics& g)
 
 void GraphComponent::mouseDown(const juce::MouseEvent& event)
 {
-	auto plot = getLocalBounds().toFloat().reduced(10.0f);
+	auto plot = getPlotRect();
 	dragIndex = pickPoint(event.position, plot);
 }
 
@@ -188,7 +203,7 @@ void GraphComponent::mouseDrag(const juce::MouseEvent& event)
 {
 	if (dragIndex < 0 || coeffs == nullptr) return;
 
-	auto plot = getLocalBounds().toFloat().reduced(10.0f);
+	auto plot = getPlotRect();
 	double yWorld = screenToWorldY(event.position.y, plot);
 	yWorld = juce::jlimit(yMin, yMax, yWorld);
 	(*coeffs)[static_cast<size_t>(dragIndex)] = yWorld;
