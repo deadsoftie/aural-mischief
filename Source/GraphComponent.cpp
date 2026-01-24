@@ -94,8 +94,8 @@ int GraphComponent::pickPoint(juce::Point<float> mousePos, juce::Rectangle<float
 {
 	if (coeffs == nullptr) return -1;
 
-	const float radius = 9.0f;
-	const float r2 = radius * radius;
+	constexpr float hitRadius = 10.0f;
+	const float r2 = hitRadius * hitRadius;
 
 	const auto& a = *coeffs;
 
@@ -164,12 +164,15 @@ void GraphComponent::drawCurve(juce::Graphics& g, juce::Rectangle<float> plot) c
 	}
 
 	g.setColour(juce::Colours::white);
-	g.strokePath(path, juce::PathStrokeType(2.0f));
+	g.strokePath(path, juce::PathStrokeType(2.5f));
 }
 
 void GraphComponent::drawControlPoints(juce::Graphics& g, juce::Rectangle<float> plot) const
 {
 	if (coeffs == nullptr) return;
+
+	const float radius = 6.0f;
+	const float stroke = 2.0f;
 
 	const auto& a = *coeffs;
 	for (int i = 0; i <= degree; ++i)
@@ -178,16 +181,59 @@ void GraphComponent::drawControlPoints(juce::Graphics& g, juce::Rectangle<float>
 		const auto p = worldToScreen(6.0 * t, a[static_cast<size_t>(i)], plot);
 
 		g.setColour(i == dragIndex ? juce::Colours::yellow : juce::Colours::cyan);
-		g.fillEllipse(p.x - 5.0f, p.y - 5.0f, 10.0f, 10.0f);
+		g.drawEllipse(p.x - radius, p.y - radius, radius * 2.0f, radius * 2.0f, stroke);
+	}
+}
+
+void GraphComponent::drawGrid(juce::Graphics& g, juce::Rectangle<float> plot) const
+{
+	// Subtle grid color
+	g.setColour(juce::Colours::white.withAlpha(0.08f));
+
+	// Major at 0, .25, .5, .75, 1  (mapped to xWorld = 6t)
+	for (int k = 0; k <= 4; ++k)
+	{
+		const double t = k / 4.0;
+		const double xW = 6.0 * t;
+
+		auto p0 = worldToScreen(xW, yMin, plot);
+		auto p1 = worldToScreen(xW, yMax, plot);
+		g.drawLine(p0.x, p0.y, p1.x, p1.y, 1.0f);
+	}
+
+	// Horizontal grid lines for y in [-3,3] at integer values
+	for (int y = static_cast<int>(yMin); y <= static_cast<int>(yMax); ++y)
+	{
+		auto p0 = worldToScreen(xMin, (double)y, plot);
+		auto p1 = worldToScreen(xMax, (double)y, plot);
+		g.drawLine(p0.x, p0.y, p1.x, p1.y, 1.0f);
+	}
+
+	// Axes
+	g.setColour(juce::Colours::white.withAlpha(0.18f));
+
+	// y = 0 axis
+	{
+		auto p0 = worldToScreen(xMin, 0.0, plot);
+		auto p1 = worldToScreen(xMax, 0.0, plot);
+		g.drawLine(p0.x, p0.y, p1.x, p1.y, 1.5f);
+	}
+
+	// x = 0 axis
+	{
+		auto p0 = worldToScreen(0.0, yMin, plot);
+		auto p1 = worldToScreen(0.0, yMax, plot);
+		g.drawLine(p0.x, p0.y, p1.x, p1.y, 1.5f);
 	}
 }
 
 void GraphComponent::paint(juce::Graphics& g)
 {
-	g.fillAll(juce::Colours::black);
+	g.fillAll(juce::Colours::darkgrey.darker(0.7f));
 
 	auto plot = getPlotRect();
 
+	drawGrid(g, plot);
 	drawAxes(g, plot);
 	drawCurve(g, plot);
 	drawControlPoints(g, plot);

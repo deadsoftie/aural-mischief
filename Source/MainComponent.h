@@ -16,8 +16,10 @@ public:
 
 private:
 	// UI
-	juce::ComboBox degreeBox;
+	juce::Slider degreeSlider;
+	juce::Label degreeLabel;
 	juce::ComboBox methodBox;
+	juce::Label methodLabel;
 	juce::TextButton resetButton;
 
 	// Graph

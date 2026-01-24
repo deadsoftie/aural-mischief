@@ -6,18 +6,25 @@ MainComponent::MainComponent()
 	// Building the binomial coeffs up to 20
 	buildChooseTable(20);
 
-	// Degree dropdown
-	for (int d = 1; d <= 20; ++d)
-		degreeBox.addItem(juce::String(d), d);
+	// Degree slider
+	degreeLabel.setText("Degree", juce::dontSendNotification);
+	degreeLabel.setJustificationType(juce::Justification::centredLeft);
 
-	degreeBox.setSelectedId(1);
+	degreeSlider.setRange(1, 20, 1);
+	degreeSlider.setValue(1, juce::dontSendNotification);
+	degreeSlider.setSliderStyle(juce::Slider::LinearHorizontal);
+	degreeSlider.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 60, 20);
+	degreeSlider.setSkewFactor(1.0);
 
-	degreeBox.onChange = [this]()
+	degreeSlider.onValueChange = [this]()
 		{
-			setDegree(degreeBox.getSelectedId());
+			const int d = static_cast<int>(degreeSlider.getValue());
+			setDegree(d);
 		};
 
 	// Method dropdown
+	methodLabel.setText("Method", juce::dontSendNotification);
+	methodLabel.setJustificationType(juce::Justification::centredLeft);
 	methodBox.addItem("NLI (De Casteljau)", 1);
 	methodBox.addItem("BB-form (Bernstein Sum)", 2);
 	methodBox.setSelectedId(1);
@@ -35,7 +42,9 @@ MainComponent::MainComponent()
 			graph.repaint();
 		};
 
-	addAndMakeVisible(degreeBox);
+	addAndMakeVisible(degreeLabel);
+	addAndMakeVisible(degreeSlider);
+	addAndMakeVisible(methodLabel);
 	addAndMakeVisible(methodBox);
 	addAndMakeVisible(resetButton);
 	addAndMakeVisible(graph);
@@ -53,13 +62,25 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-	auto r = getLocalBounds().reduced(10);
-	auto top = r.removeFromTop(40);
+	constexpr int pad = 10;
+	constexpr int toolbarH = 40;
+	constexpr int gapX = 20;
+	constexpr int gapY = 10;
 
-	degreeBox.setBounds(top.removeFromLeft(120));
-	methodBox.setBounds(top.removeFromLeft(260));
-	resetButton.setBounds(top.removeFromLeft(160));
-	graph.setBounds(r);
+	auto area = getLocalBounds().reduced(pad);
+	auto top = area.removeFromTop(toolbarH);
+
+	degreeLabel.setBounds(top.removeFromLeft(70));
+	degreeSlider.setBounds(top.removeFromLeft(300));
+
+	methodLabel.setBounds(top.removeFromLeft(70));
+	methodBox.setBounds(top.removeFromLeft(190));
+
+	top.removeFromLeft(gapX);
+	resetButton.setBounds(top.removeFromLeft(120));
+
+	area.removeFromTop(gapY);
+	graph.setBounds(area);
 }
 
 void MainComponent::buildChooseTable(int maxDegree)

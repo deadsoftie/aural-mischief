@@ -46,4 +46,5 @@ private:
 	static void drawAxes(juce::Graphics& g, juce::Rectangle<float> plot);
 	void drawCurve(juce::Graphics& g, juce::Rectangle<float> plot) const;
 	void drawControlPoints(juce::Graphics& g, juce::Rectangle<float> plot) const;
+	void drawGrid(juce::Graphics& g, juce::Rectangle<float> plot) const;
 };
