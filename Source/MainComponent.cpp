@@ -25,6 +25,7 @@ MainComponent::MainComponent()
 	methodBox.onChange = [this]()
 		{
 			method = (methodBox.getSelectedId() == 1) ? GraphComponent::EvalMethod::NLI : GraphComponent::EvalMethod::BB;
+			graph.setMethod(method);
 		};
 
 	resetButton.setButtonText("Reset");

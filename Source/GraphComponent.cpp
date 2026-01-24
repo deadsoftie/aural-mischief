@@ -128,7 +128,7 @@ void GraphComponent::drawAxes(juce::Graphics& g, juce::Rectangle<float> plot)
 	// y-axis
 	{
 		const auto p0 = worldToScreen(0.0, yMin, plot);
-		const auto p1 = worldToScreen(0.0, yMin, plot);
+		const auto p1 = worldToScreen(0.0, yMax, plot);
 		g.drawLine({ p0.x, p0.y, p1.x, p1.y }, 1.0f);
 	}
 
@@ -142,8 +142,8 @@ void GraphComponent::drawAxes(juce::Graphics& g, juce::Rectangle<float> plot)
 	g.setFont(15.0f);
 	g.drawText("t = 0", static_cast<int>(plot.getX()) + 2, yLabel, 40, labelH, juce::Justification::left);
 	g.drawText("t = 1", static_cast<int>(plot.getRight()) - 42, yLabel, 40, labelH, juce::Justification::right);
-	g.drawText("t = 3", static_cast<int>(plot.getX()) + 2, static_cast<int>(plot.getY()) - 18, 40, 16, juce::Justification::left);
-	g.drawText("t = -3", static_cast<int>(plot.getX()) + 2, static_cast<int>(plot.getBottom()) + 2, 40, 16, juce::Justification::left);
+	g.drawText("y = 3", static_cast<int>(plot.getX()) + 2, static_cast<int>(plot.getY()) - 18, 40, 16, juce::Justification::left);
+	g.drawText("y = -3", static_cast<int>(plot.getX()) + 2, static_cast<int>(plot.getBottom()) + 2, 40, 16, juce::Justification::left);
 }
 
 void GraphComponent::drawCurve(juce::Graphics& g, juce::Rectangle<float> plot) const
