@@ -28,10 +28,11 @@ void GraphComponent::setMethod(EvalMethod newMethod)
 double GraphComponent::eval(double t) const
 {
 	if (coeffs == nullptr) return 0.0;
-
 	const auto& a = *coeffs;
 
 	if (degree <= 0) return a.empty() ? 0.0 : a[0];
+	if (t <= 0.0) return a[0];
+	if (t >= 1.0) return a[degree];
 
 	if (method == EvalMethod::NLI)
 	{
