@@ -1,38 +1,38 @@
 #pragma once
-
 #include <JuceHeader.h>
 
-#include "GraphComponent.h"
-#include "GraphComponent.h"
+#include "Project1.h"
+#include "Project2.h"
 
-class MainComponent : public juce::Component
+class MainComponent : public juce::Component, private juce::MenuBarModel
 {
 public:
 	MainComponent();
-	~MainComponent() override = default;
+	~MainComponent() override;
 
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 
 private:
-	// UI
-	juce::Slider degreeSlider;
-	juce::Label degreeLabel;
-	juce::ComboBox methodBox;
-	juce::Label methodLabel;
-	juce::TextButton resetButton;
+	// Menu
+	juce::MenuBarComponent menuBar{ this };
 
-	// Graph
-	GraphComponent graph;
+	// Project system
+	std::vector <std::unique_ptr<IProject>>projects;
+	std::unique_ptr<juce::Component> activeView;
+	int currentProjectIndex = -1;
 
-	int degree = 1;
-	std::vector<double> a; // a0..ad, clamped to [-3,3]
-	GraphComponent::EvalMethod method = GraphComponent::EvalMethod::NLI;
+	// MenuBarModal
+	juce::StringArray getMenuBarNames() override;
+	juce::PopupMenu getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName) override;
+	void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
 
-	std::vector<std::vector<double>> choose; // binomial co-efficients
+	void switchToProject(int index);
 
-	void buildChooseTable(int maxDegree);
-	void setDegree(int d);
+	enum MenuIds
+	{
+		ProjectBaseId = 1000
+	};
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

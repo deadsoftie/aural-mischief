@@ -4,10 +4,31 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="AX1iJF" name="aural-mischief">
     <GROUP id="{B1361C3E-7C07-DCAF-CBB8-D32D4B4451E1}" name="Source">
-      <FILE id="DmtEEP" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="rah8Yx" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="jsRFjU" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
+      <GROUP id="{8D4C1CC8-5DFA-7A97-AC1F-1EC1CADEABB9}" name="App">
+        <FILE id="MJCcBo" name="GraphComponent.cpp" compile="1" resource="0"
+              file="Source/GraphComponent.cpp"/>
+        <FILE id="UHPj0O" name="GraphComponent.h" compile="0" resource="0"
+              file="Source/GraphComponent.h"/>
+        <FILE id="jsRFjU" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/MainComponent.cpp"/>
+        <FILE id="rah8Yx" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="DmtEEP" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      </GROUP>
+      <GROUP id="{C34DDFEF-6CE2-273D-D613-345F97754FA3}" name="Projects">
+        <GROUP id="{A670EA62-41FA-5EBD-7556-C46B31399989}" name="Project-2">
+          <FILE id="iNsrXx" name="Project2.h" compile="0" resource="0" file="Source/Project2.h"/>
+          <FILE id="cGLH6n" name="Project2Component.h" compile="0" resource="0"
+                file="Source/Project2Component.h"/>
+        </GROUP>
+        <GROUP id="{FB34F212-A2B8-ACA7-BA20-FD5E8330091B}" name="Project-1">
+          <FILE id="WWngPV" name="Project1.h" compile="0" resource="0" file="Source/Project1.h"/>
+          <FILE id="HQ0M9e" name="Project1Component.cpp" compile="1" resource="0"
+                file="Source/Project1Component.cpp"/>
+          <FILE id="QteQqg" name="Project1Component.h" compile="0" resource="0"
+                file="Source/Project1Component.h"/>
+        </GROUP>
+        <FILE id="ufn6N6" name="IProject.h" compile="0" resource="0" file="Source/IProject.h"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <MODULES>
