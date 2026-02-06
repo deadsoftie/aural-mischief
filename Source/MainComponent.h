@@ -1,8 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-#include "Project1.h"
-#include "Project2.h"
+#include "IProject.h"
 
 class MainComponent : public juce::Component, private juce::MenuBarModel
 {

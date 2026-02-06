@@ -16,7 +16,12 @@
       </GROUP>
       <GROUP id="{C34DDFEF-6CE2-273D-D613-345F97754FA3}" name="Projects">
         <GROUP id="{A670EA62-41FA-5EBD-7556-C46B31399989}" name="Project-2">
+          <FILE id="VGxXPz" name="BezierCanvas.cpp" compile="1" resource="0"
+                file="Source/BezierCanvas.cpp"/>
+          <FILE id="kwB6BP" name="BezierCanvas.h" compile="0" resource="0" file="Source/BezierCanvas.h"/>
           <FILE id="iNsrXx" name="Project2.h" compile="0" resource="0" file="Source/Project2.h"/>
+          <FILE id="sO0a6x" name="Project2Component.cpp" compile="1" resource="0"
+                file="Source/Project2Component.cpp"/>
           <FILE id="cGLH6n" name="Project2Component.h" compile="0" resource="0"
                 file="Source/Project2Component.h"/>
         </GROUP>

@@ -1,5 +1,8 @@
 #include "MainComponent.h"
 
+#include "Project1.h"
+#include "Project2.h"
+
 MainComponent::MainComponent()
 {
 	projects.emplace_back(std::make_unique<Project1>());
@@ -7,10 +10,10 @@ MainComponent::MainComponent()
 
 	addAndMakeVisible(menuBar);
 
-	// Default to Project 1
-	switchToProject(0);
+	// Default to Project 2
+	switchToProject(1);
 
-	setSize(900, 600);
+	setSize(1280, 720);
 }
 
 MainComponent::~MainComponent()
