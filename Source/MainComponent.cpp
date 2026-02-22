@@ -2,16 +2,18 @@
 
 #include "Project1.h"
 #include "Project2.h"
+#include "Project3.h"
 
 MainComponent::MainComponent()
 {
-	projects.emplace_back(std::make_unique<Project1>());
+	projects.emplace_back(std::make_unique<Project3>());
 	projects.emplace_back(std::make_unique<Project2>());
+	projects.emplace_back(std::make_unique<Project1>());
 
 	addAndMakeVisible(menuBar);
 
-	// Default to Project 2
-	switchToProject(1);
+	// Default to latest project
+	switchToProject(0);
 
 	setSize(1280, 720);
 }
