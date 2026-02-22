@@ -1,4 +1,4 @@
-# Project 2 – Interactive Bézier Curve Visualization
+# Project 3 – Interactive Newton Interpolation Visualization
 
 Rahul Nair (rahul.nair@digipen.edu)
 
