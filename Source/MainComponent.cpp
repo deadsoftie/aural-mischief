@@ -3,9 +3,11 @@
 #include "Project1.h"
 #include "Project2.h"
 #include "Project3.h"
+#include "Project4.h"
 
 MainComponent::MainComponent()
 {
+	projects.emplace_back(std::make_unique<Project4>());
 	projects.emplace_back(std::make_unique<Project3>());
 	projects.emplace_back(std::make_unique<Project2>());
 	projects.emplace_back(std::make_unique<Project1>());

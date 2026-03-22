@@ -15,6 +15,17 @@
         <FILE id="DmtEEP" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       </GROUP>
       <GROUP id="{C34DDFEF-6CE2-273D-D613-345F97754FA3}" name="Projects">
+        <GROUP id="{79B40E15-BF1B-0B6F-A004-9B35A589CE28}" name="Project-4">
+          <FILE id="Id7tpQ" name="CubicSplineCanvas.cpp" compile="1" resource="0"
+                file="Source/CubicSplineCanvas.cpp"/>
+          <FILE id="kfELKv" name="CubicSplineCanvas.h" compile="0" resource="0"
+                file="Source/CubicSplineCanvas.h"/>
+          <FILE id="cRuC8h" name="Project4.h" compile="0" resource="0" file="Source/Project4.h"/>
+          <FILE id="aZAAyj" name="Project4Component.cpp" compile="1" resource="0"
+                file="Source/Project4Component.cpp"/>
+          <FILE id="OkwhlB" name="Project4Component.h" compile="0" resource="0"
+                file="Source/Project4Component.h"/>
+        </GROUP>
         <GROUP id="{D5A65841-CFA2-45F3-0191-E1621489F288}" name="Project-3">
           <FILE id="fIxwxK" name="NewtonInterpCanvas.cpp" compile="1" resource="0"
                 file="Source/NewtonInterpCanvas.cpp"/>
