@@ -181,11 +181,15 @@ void HermiteInterpCanvas::buildCurvePolyline(std::vector<juce::Point<float>>& ou
     constexpr int samples = 700;
     out.reserve(static_cast<size_t>(samples) + 1);
 
+    const float margin = 4000.0f;
+    const float xMax   = static_cast<float>(getWidth())  + margin;
+    const float yMax   = static_cast<float>(getHeight()) + margin;
+
     for (int s = 0; s <= samples; ++s)
     {
-        const double t = tMin + (tMax - tMin) * static_cast<double>(s) / static_cast<double>(samples);
-        const float  x = static_cast<float>(evalNewton(t, expandedNodes, coeffX));
-        const float  y = static_cast<float>(evalNewton(t, expandedNodes, coeffY));
+        const double t  = tMin + (tMax - tMin) * static_cast<double>(s) / static_cast<double>(samples);
+        const float  x  = juce::jlimit(-margin, xMax, static_cast<float>(evalNewton(t, expandedNodes, coeffX)));
+        const float  y  = juce::jlimit(-margin, yMax, static_cast<float>(evalNewton(t, expandedNodes, coeffY)));
         out.emplace_back(x, y);
     }
 }
@@ -409,6 +413,21 @@ void HermiteInterpCanvas::paint(juce::Graphics& g)
                    static_cast<int>(pt.p.x) + 9,
                    static_cast<int>(pt.p.y) - 9,
                    30, 16, juce::Justification::left);
+
+        // Derivative-order badge beneath the point label
+        juce::String badge;
+        if (pt.hasDeriv1) badge += "f'";
+        for (const auto& [k, v] : pt.higherDerivY)
+            badge += (badge.isEmpty() ? "" : " ") + juce::String("f") + juce::String(k);
+        if (badge.isNotEmpty())
+        {
+            g.setColour(juce::Colours::limegreen.withAlpha(0.9f));
+            g.setFont(11.0f);
+            g.drawText(badge,
+                       static_cast<int>(pt.p.x) + 9,
+                       static_cast<int>(pt.p.y) + 5,
+                       60, 13, juce::Justification::left);
+        }
     }
 }
 
@@ -432,7 +451,7 @@ void HermiteInterpCanvas::showContextMenu(int ptIdx)
 
     // Use a SafePointer so the lambda is safe if the canvas is torn down
     juce::Component::SafePointer<HermiteInterpCanvas> safe(this);
-    menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(this),
+    menu.showMenuAsync(juce::PopupMenu::Options{}.withMousePosition(),
         [safe, ptIdx](int result)
         {
             if (safe == nullptr || result == 0) return;
@@ -443,6 +462,7 @@ void HermiteInterpCanvas::showContextMenu(int ptIdx)
                 canvas.tangentDragActive   = true;
                 canvas.tangentDragPointIdx = ptIdx;
                 canvas.points[static_cast<size_t>(ptIdx)].hasDeriv1 = true;
+                canvas.points[static_cast<size_t>(ptIdx)].slopeY    = 0.0;
                 canvas.rebuildHermite();
                 canvas.repaint();
             }
