@@ -27,9 +27,18 @@ Project5Component::Project5Component()
     degreeSlider.onValueChange = [this]()
     {
         d = static_cast<int>(degreeSlider.getValue());
-        // Ensure active interval [d, N-d] is non-trivial (width >= 2)
-        N = std::max(d + 10, 2 * d + 2);
-        nSlider.setRange(2 * d + 2, 2 * d + 20, 1);
+        const int nMin = 2 * d + 2;
+        N = std::min(std::max(d + 10, nMin), 42);
+        if (nMin >= 42)
+        {
+            nSlider.setRange(41, 42, 1);   // valid range so JUCE doesn't break
+            nSlider.setEnabled(false);
+        }
+        else
+        {
+            nSlider.setRange(nMin, 42, 1);
+            nSlider.setEnabled(true);
+        }
         nSlider.setValue(N, juce::dontSendNotification);
         const int nc = numCoeffs();
         coeffs.assign(static_cast<size_t>(std::max(nc, 0)), 1.0);
@@ -40,7 +49,7 @@ Project5Component::Project5Component()
     nLabel.setText("N:", juce::dontSendNotification);
     nLabel.setJustificationType(juce::Justification::centredLeft);
 
-    nSlider.setRange(2 * d + 2, 2 * d + 20, 1);
+    nSlider.setRange(2 * d + 2, 42, 1);
     nSlider.setValue(N, juce::dontSendNotification);
     nSlider.setSliderStyle(juce::Slider::LinearHorizontal);
     nSlider.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 30, 20);
@@ -48,19 +57,6 @@ Project5Component::Project5Component()
     {
         N = static_cast<int>(nSlider.getValue());
         rebuild();   // preserves existing coeffs, adds 1.0 for new ones
-        repaint();
-    };
-
-    // ── Method dropdown ───────────────────────────────────────────────────────
-    methodLabel.setText("Method:", juce::dontSendNotification);
-    methodLabel.setJustificationType(juce::Justification::centredLeft);
-
-    methodBox.addItem("De Boor", 1);
-    methodBox.addItem("Divided Differences", 2);
-    methodBox.setSelectedId(1);
-    methodBox.onChange = [this]()
-    {
-        method = (methodBox.getSelectedId() == 2) ? EvalMethod::DividedDiff : EvalMethod::DeBoor;
         repaint();
     };
 
@@ -76,8 +72,6 @@ Project5Component::Project5Component()
     addAndMakeVisible(degreeSlider);
     addAndMakeVisible(nLabel);
     addAndMakeVisible(nSlider);
-    addAndMakeVisible(methodLabel);
-    addAndMakeVisible(methodBox);
     addAndMakeVisible(resetButton);
 
     coeffs.assign(static_cast<size_t>(numCoeffs()), 1.0);
@@ -101,18 +95,21 @@ void Project5Component::rebuild()
 // ============================================================================
 
 // De Boor algorithm (Nested Linear Interpolation on knot intervals).
-// For t in [d, N-d], sets J = floor(t) then runs d stages of blending.
+// Works over the full [0, N] range; coefficients outside [0, nc-1] are 0
+// (non-existent B-splines contribute nothing).
 double Project5Component::evalDeBoor(double t) const
 {
     const int nc = numCoeffs();
     if (nc <= 0) return 0.0;
 
-    // J is the knot-interval index: t in [J, J+1). Clamp right endpoint.
+    // J is the knot-interval index: t in [J, J+1). Clamp to valid array range.
     int J = static_cast<int>(std::floor(t));
-    J = juce::jlimit(d, N - d - 1, J);
+    J = juce::jlimit(0, N - 1, J);
 
-    // Work copy — indices 0..nc-1 map directly to global coefficient indices
-    std::vector<double> c(coeffs.begin(), coeffs.end());
+    // Work array of size N: coeffs[0..nc-1], zeros beyond (missing B-splines).
+    std::vector<double> c(static_cast<size_t>(N), 0.0);
+    for (int i = 0; i < nc; ++i)
+        c[static_cast<size_t>(i)] = coeffs[static_cast<size_t>(i)];
 
     // d stages; right-to-left traversal keeps c[i-1] at stage (p-1) when needed
     for (int p = 1; p <= d; ++p)
@@ -120,6 +117,7 @@ double Project5Component::evalDeBoor(double t) const
         const double denom = static_cast<double>(d - p + 1);
         for (int i = J; i >= J - d + p; --i)
         {
+            if (i < 0) break;
             const double alpha = (t - static_cast<double>(i)) / denom;
             const double cprev = (i > 0) ? c[static_cast<size_t>(i - 1)] : 0.0;
             c[static_cast<size_t>(i)] = alpha * c[static_cast<size_t>(i)] + (1.0 - alpha) * cprev;
@@ -129,49 +127,6 @@ double Project5Component::evalDeBoor(double t) const
     return c[static_cast<size_t>(J)];
 }
 
-// Divided-differences method.
-// B_i^d(t) = (-1)^(d+1) * (d+1) * [t_i,...,t_{i+d+1}](t-x)^d_+
-// With uniform knots the d+2 nodes are {i, i+1, ..., i+d+1} and each
-// divided-difference denominator at level k equals k (spacing = 1).
-double Project5Component::evalDividedDiff(double t) const
-{
-    const int nc = numCoeffs();
-    if (nc <= 0) return 0.0;
-
-    const int     numNodes = d + 2;                      // t_i ... t_{i+d+1}
-    const double  sign     = ((d + 1) % 2 == 0) ? 1.0 : -1.0;
-    const double  scale    = sign * static_cast<double>(d + 1);
-
-    std::vector<double> g(static_cast<size_t>(numNodes));
-    double result = 0.0;
-
-    for (int i = 0; i < nc; ++i)
-    {
-        // Initialise: g[j] = (t - (i+j))^d_+
-        for (int j = 0; j < numNodes; ++j)
-        {
-            const double diff = t - static_cast<double>(i + j);
-            g[static_cast<size_t>(j)] = (diff > 0.0) ? std::pow(diff, static_cast<double>(d)) : 0.0;
-        }
-
-        // Build divided-difference table in-place (denominator = k at level k)
-        for (int k = 1; k < numNodes; ++k)
-        {
-            for (int j = numNodes - 1; j >= k; --j)
-                g[static_cast<size_t>(j)] = (g[static_cast<size_t>(j)] - g[static_cast<size_t>(j - 1)])
-                                            / static_cast<double>(k);
-        }
-
-        result += coeffs[static_cast<size_t>(i)] * scale * g[static_cast<size_t>(d + 1)];
-    }
-
-    return result;
-}
-
-double Project5Component::eval(double t) const
-{
-    return (method == EvalMethod::DeBoor) ? evalDeBoor(t) : evalDividedDiff(t);
-}
 
 // ============================================================================
 // Coordinate helpers
@@ -220,14 +175,6 @@ int Project5Component::pickDot(juce::Point<float> pos, juce::Rectangle<float> pl
 // Drawing
 // ============================================================================
 
-void Project5Component::drawBackground(juce::Graphics& g, juce::Rectangle<float> plot) const
-{
-    if (N - d <= d) return;
-    const auto p0 = toScreen(static_cast<double>(d),     kYMin, plot);
-    const auto p1 = toScreen(static_cast<double>(N - d), kYMax, plot);
-    g.setColour(juce::Colours::white.withAlpha(0.05f));
-    g.fillRect(juce::Rectangle<float>(p0.x, p1.y, p1.x - p0.x, p0.y - p1.y));
-}
 
 void Project5Component::drawGrid(juce::Graphics& g, juce::Rectangle<float> plot) const
 {
@@ -261,29 +208,20 @@ void Project5Component::drawGrid(juce::Graphics& g, juce::Rectangle<float> plot)
     g.drawRect(plot, 1.0f);
 }
 
-void Project5Component::drawReferenceLine(juce::Graphics& g, juce::Rectangle<float> plot) const
-{
-    if (N - d <= d) return;   // no active interval
-    // y = 1 line over [d, N-d]: initial state (partition-of-unity)
-    const auto p0 = toScreen(static_cast<double>(d),     1.0, plot);
-    const auto p1 = toScreen(static_cast<double>(N - d), 1.0, plot);
-    g.setColour(juce::Colours::yellow.withAlpha(0.35f));
-    g.drawLine(p0.x, p0.y, p1.x, p1.y, 2.0f);
-}
 
 void Project5Component::drawCurve(juce::Graphics& g, juce::Rectangle<float> plot) const
 {
     if (numCoeffs() <= 0 || N - d <= d) return;
 
-    const double tStart  = static_cast<double>(d);
-    const double tEnd    = static_cast<double>(N - d);
+    const double tStart  = 0.0;
+    const double tEnd    = static_cast<double>(N);
     constexpr int kSamples = 800;
 
     juce::Path path;
     for (int s = 0; s <= kSamples; ++s)
     {
         const double t = tStart + (tEnd - tStart) * static_cast<double>(s) / kSamples;
-        double y = eval(t);
+        double y = evalDeBoor(t);
         y = juce::jlimit(kYMin, kYMax, y);
         const auto p = toScreen(t, y, plot);
         if (s == 0) path.startNewSubPath(p);
@@ -334,24 +272,7 @@ void Project5Component::drawAxisLabels(juce::Graphics& g, juce::Rectangle<float>
                    38, 14, juce::Justification::right);
     }
 
-    // Active-interval boundary markers
-    if (N - d > d)
-    {
-        g.setColour(juce::Colours::yellow.withAlpha(0.7f));
-        g.setFont(11.0f);
-        {
-            const auto p = toScreen(static_cast<double>(d), kYMax, plot);
-            g.drawText("t=" + juce::String(d),
-                       static_cast<int>(p.x) - 18, static_cast<int>(p.y) - 20,
-                       36, 14, juce::Justification::centred);
-        }
-        {
-            const auto p = toScreen(static_cast<double>(N - d), kYMax, plot);
-            g.drawText("t=" + juce::String(N - d),
-                       static_cast<int>(p.x) - 18, static_cast<int>(p.y) - 20,
-                       36, 14, juce::Justification::centred);
-        }
-    }
+
 }
 
 // ============================================================================
@@ -363,9 +284,8 @@ void Project5Component::paint(juce::Graphics& g)
     g.fillAll(juce::Colours::darkslategrey);
 
     const auto plot = getPlotRect();
-    drawBackground(g, plot);
     drawGrid(g, plot);
-    drawReferenceLine(g, plot);
+
     drawCurve(g, plot);
     drawDots(g, plot);
     drawAxisLabels(g, plot);
@@ -381,9 +301,6 @@ void Project5Component::resized()
     top.removeFromLeft(12);
     nLabel.setBounds(top.removeFromLeft(22));
     nSlider.setBounds(top.removeFromLeft(170));
-    top.removeFromLeft(12);
-    methodLabel.setBounds(top.removeFromLeft(55));
-    methodBox.setBounds(top.removeFromLeft(170));
     top.removeFromLeft(12);
     resetButton.setBounds(top.removeFromLeft(70));
 }

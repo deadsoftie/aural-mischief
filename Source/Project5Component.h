@@ -26,18 +26,14 @@ public:
     void mouseUp  (const juce::MouseEvent& e)   override;
 
 private:
-    enum class EvalMethod { DeBoor, DividedDiff };
-
     // ── UI controls ──────────────────────────────────────────────────────────
-    juce::Label      degreeLabel, nLabel, methodLabel;
+    juce::Label      degreeLabel, nLabel;
     juce::Slider     degreeSlider, nSlider;
-    juce::ComboBox   methodBox;
     juce::TextButton resetButton;
 
     // ── State ────────────────────────────────────────────────────────────────
     int    d         = 3;
     int    N         = 13;   // default = d + 10
-    EvalMethod method = EvalMethod::DeBoor;
     std::vector<double> coeffs;  // c_0 ... c_{N-d-1}, all start at 1.0
     int    dragIndex = -1;
 
@@ -48,9 +44,7 @@ private:
     double xWorldMax()      const { return static_cast<double>(N); }
 
     // Evaluation
-    double evalDeBoor     (double t) const;
-    double evalDividedDiff(double t) const;
-    double eval           (double t) const;
+    double evalDeBoor(double t) const;
 
     // ── Layout constants ──────────────────────────────────────────────────────
     static constexpr float kPadL   = 50.0f;
@@ -71,9 +65,8 @@ private:
     int                    pickDot  (juce::Point<float> pos, juce::Rectangle<float> plot) const;
 
     // ── Drawing ───────────────────────────────────────────────────────────────
-    void drawBackground   (juce::Graphics& g, juce::Rectangle<float> plot) const;
     void drawGrid         (juce::Graphics& g, juce::Rectangle<float> plot) const;
-    void drawReferenceLine(juce::Graphics& g, juce::Rectangle<float> plot) const;
+
     void drawCurve        (juce::Graphics& g, juce::Rectangle<float> plot) const;
     void drawDots         (juce::Graphics& g, juce::Rectangle<float> plot) const;
     void drawAxisLabels   (juce::Graphics& g, juce::Rectangle<float> plot) const;
