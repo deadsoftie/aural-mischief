@@ -51,6 +51,17 @@
           <FILE id="tZiNE5" name="Project3Component.h" compile="0" resource="0"
                 file="Source/Project3Component.h"/>
         </GROUP>
+        <GROUP id="{EC200000-0000-0000-0000-000000000002}" name="EC-2">
+          <FILE id="ec2hdr" name="ProjectEC2.h" compile="0" resource="0" file="Source/ProjectEC2.h"/>
+          <FILE id="ec2cmp" name="ProjectEC2Component.cpp" compile="1" resource="0"
+                file="Source/ProjectEC2Component.cpp"/>
+          <FILE id="ec2cph" name="ProjectEC2Component.h" compile="0" resource="0"
+                file="Source/ProjectEC2Component.h"/>
+          <FILE id="ec2cnv" name="BestFitCanvas.cpp" compile="1" resource="0"
+                file="Source/BestFitCanvas.cpp"/>
+          <FILE id="ec2cvh" name="BestFitCanvas.h" compile="0" resource="0"
+                file="Source/BestFitCanvas.h"/>
+        </GROUP>
         <GROUP id="{EC100000-0000-0000-0000-000000000001}" name="EC-1">
           <FILE id="ec1hdr" name="ProjectEC1.h" compile="0" resource="0" file="Source/ProjectEC1.h"/>
           <FILE id="ec1cmp" name="ProjectEC1Component.cpp" compile="1" resource="0"
