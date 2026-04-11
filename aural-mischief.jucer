@@ -15,12 +15,16 @@
         <FILE id="DmtEEP" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       </GROUP>
       <GROUP id="{C34DDFEF-6CE2-273D-D613-345F97754FA3}" name="Projects">
-        <GROUP id="{24B14032-8560-EF1D-EE3B-2AF9F69E20A9}" name="Project-5">
-          <FILE id="qQjoC0" name="Project5.h" compile="0" resource="0" file="Source/Project5.h"/>
-          <FILE id="EpzOWh" name="Project5Component.cpp" compile="1" resource="0"
-                file="Source/Project5Component.cpp"/>
-          <FILE id="Lgbpok" name="Project5Component.h" compile="0" resource="0"
-                file="Source/Project5Component.h"/>
+        <GROUP id="{24B14032-8560-EF1D-EE3B-2AF9F69E20A9}" name="Project-6">
+          <FILE id="p6hdr0" name="Project6.h" compile="0" resource="0" file="Source/Project6.h"/>
+          <FILE id="p6cmp0" name="Project6Component.cpp" compile="1" resource="0"
+                file="Source/Project6Component.cpp"/>
+          <FILE id="p6cmph" name="Project6Component.h" compile="0" resource="0"
+                file="Source/Project6Component.h"/>
+          <FILE id="p6canv" name="DeBoorPolyCanvas.cpp" compile="1" resource="0"
+                file="Source/DeBoorPolyCanvas.cpp"/>
+          <FILE id="p6canvh" name="DeBoorPolyCanvas.h" compile="0" resource="0"
+                file="Source/DeBoorPolyCanvas.h"/>
         </GROUP>
         <GROUP id="{A1B2C3D4-EF56-7890-ABCD-EF1234567890}" name="Project-5">
           <FILE id="p5hdrA" name="Project5.h" compile="0" resource="0" file="Source/Project5.h"/>

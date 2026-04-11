@@ -5,6 +5,7 @@
 #include "Project3.h"
 #include "Project4.h"
 #include "Project5.h"
+#include "Project6.h"
 #include "ProjectEC1.h"
 #include "ProjectEC2.h"
 
@@ -12,6 +13,7 @@ MainComponent::MainComponent()
 {
 	projects.emplace_back(std::make_unique<ProjectEC2>());
 	projects.emplace_back(std::make_unique<ProjectEC1>());
+	projects.emplace_back(std::make_unique<Project6>());
 	projects.emplace_back(std::make_unique<Project5>());
 	projects.emplace_back(std::make_unique<Project4>());
 	projects.emplace_back(std::make_unique<Project3>());
@@ -31,7 +33,7 @@ MainComponent::~MainComponent()
 	menuBar.setModel(nullptr);
 }
 
-void MainComponent::paint(juce::Graphics& g)
+void MainComponent::paint(juce::Graphics &g)
 {
 	g.fillAll(juce::Colours::darkgrey);
 }
@@ -49,10 +51,10 @@ void MainComponent::resized()
 
 juce::StringArray MainComponent::getMenuBarNames()
 {
-	return { "Projects" };
+	return {"Projects"};
 }
 
-juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName)
+juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String &menuName)
 {
 	juce::PopupMenu menu;
 
