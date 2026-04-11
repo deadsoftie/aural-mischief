@@ -6,9 +6,15 @@
 #include "Project4.h"
 #include "Project5.h"
 #include "Project6.h"
+#include "ProjectEC1.h"
+#include "ProjectEC2.h"
+#include "ProjectEC3.h"
 
 MainComponent::MainComponent()
 {
+	projects.emplace_back(std::make_unique<ProjectEC3>());
+	projects.emplace_back(std::make_unique<ProjectEC2>());
+	projects.emplace_back(std::make_unique<ProjectEC1>());
 	projects.emplace_back(std::make_unique<Project6>());
 	projects.emplace_back(std::make_unique<Project5>());
 	projects.emplace_back(std::make_unique<Project4>());
@@ -29,7 +35,7 @@ MainComponent::~MainComponent()
 	menuBar.setModel(nullptr);
 }
 
-void MainComponent::paint(juce::Graphics& g)
+void MainComponent::paint(juce::Graphics &g)
 {
 	g.fillAll(juce::Colours::darkgrey);
 }
@@ -47,20 +53,19 @@ void MainComponent::resized()
 
 juce::StringArray MainComponent::getMenuBarNames()
 {
-	return { "Projects" };
+	return {"Projects", "EC Projects"};
 }
 
-juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName)
+juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String&)
 {
 	juce::PopupMenu menu;
 
-	if (topLevelMenuIndex == 0)
+	for (int i = 0; i < static_cast<int>(projects.size()); ++i)
 	{
-		for (int i = 0; i < static_cast<int>(projects.size()); ++i)
-		{
-			const bool isCurrent = (i == currentProjectIndex);
-			menu.addItem(ProjectBaseId + i, projects[i]->getName(), true, isCurrent);
-		}
+		const bool isEC = projects[i]->getName().startsWith("EC-");
+
+		if ((topLevelMenuIndex == 0 && !isEC) || (topLevelMenuIndex == 1 && isEC))
+			menu.addItem(ProjectBaseId + i, projects[i]->getName(), true, i == currentProjectIndex);
 	}
 
 	return menu;

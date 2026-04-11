@@ -13,6 +13,9 @@ public:
 
 	void setMethod(EvalMethod newMethod);
 
+	// Called on the message thread after every coefficient change (drag or drop).
+	std::function<void()> onCoeffChanged;
+
 	void paint(juce::Graphics& g) override;
 
 	void mouseDown(const juce::MouseEvent& event) override;
