@@ -53,20 +53,19 @@ void MainComponent::resized()
 
 juce::StringArray MainComponent::getMenuBarNames()
 {
-	return {"Projects"};
+	return {"Projects", "EC Projects"};
 }
 
-juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String &menuName)
+juce::PopupMenu MainComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String&)
 {
 	juce::PopupMenu menu;
 
-	if (topLevelMenuIndex == 0)
+	for (int i = 0; i < static_cast<int>(projects.size()); ++i)
 	{
-		for (int i = 0; i < static_cast<int>(projects.size()); ++i)
-		{
-			const bool isCurrent = (i == currentProjectIndex);
-			menu.addItem(ProjectBaseId + i, projects[i]->getName(), true, isCurrent);
-		}
+		const bool isEC = projects[i]->getName().startsWith("EC-");
+
+		if ((topLevelMenuIndex == 0 && !isEC) || (topLevelMenuIndex == 1 && isEC))
+			menu.addItem(ProjectBaseId + i, projects[i]->getName(), true, i == currentProjectIndex);
 	}
 
 	return menu;
