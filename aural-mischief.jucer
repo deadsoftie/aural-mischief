@@ -55,6 +55,13 @@
           <FILE id="tZiNE5" name="Project3Component.h" compile="0" resource="0"
                 file="Source/Project3Component.h"/>
         </GROUP>
+        <GROUP id="{EC300000-0000-0000-0000-000000000003}" name="EC-3">
+          <FILE id="ec3hdr" name="ProjectEC3.h" compile="0" resource="0" file="Source/ProjectEC3.h"/>
+          <FILE id="ec3cmp" name="ProjectEC3Component.cpp" compile="1" resource="0"
+                file="Source/ProjectEC3Component.cpp"/>
+          <FILE id="ec3cph" name="ProjectEC3Component.h" compile="0" resource="0"
+                file="Source/ProjectEC3Component.h"/>
+        </GROUP>
         <GROUP id="{EC200000-0000-0000-0000-000000000002}" name="EC-2">
           <FILE id="ec2hdr" name="ProjectEC2.h" compile="0" resource="0" file="Source/ProjectEC2.h"/>
           <FILE id="ec2cmp" name="ProjectEC2Component.cpp" compile="1" resource="0"
@@ -99,6 +106,8 @@
     </GROUP>
   </MAINGROUP>
   <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -114,6 +123,8 @@
         <CONFIGURATION isDebug="0" name="Release" targetName="aural-mischief"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
         <MODULEPATH id="juce_events" path="../JUCE/modules"/>

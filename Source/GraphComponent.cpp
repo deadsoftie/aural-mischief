@@ -256,6 +256,8 @@ void GraphComponent::mouseDrag(const juce::MouseEvent& event)
 	(*coeffs)[static_cast<size_t>(dragIndex)] = yWorld;
 
 	repaint();
+
+	if (onCoeffChanged) onCoeffChanged();
 }
 
 void GraphComponent::mouseUp(const juce::MouseEvent& event)
