@@ -32,7 +32,7 @@ void BestFitCanvas::clearPoints()
 
 int BestFitCanvas::pickPoint(juce::Point<float> pos) const
 {
-    for (int i = 0; i < (int)pts.size(); ++i)
+    for (int i = 0; i < static_cast<int>(pts.size()); ++i)
         if (pts[i].getDistanceFrom(pos) <= kHitRadius)
             return i;
     return -1;
@@ -58,13 +58,13 @@ void BestFitCanvas::mouseDown(const juce::MouseEvent& e)
     {
         pts.push_back(pos);
         recompute();
-        dragIndex = (int)pts.size() - 1;
+        dragIndex = static_cast<int>(pts.size()) - 1;
     }
 }
 
 void BestFitCanvas::mouseDrag(const juce::MouseEvent& e)
 {
-    if (dragIndex >= 0 && dragIndex < (int)pts.size())
+    if (dragIndex >= 0 && dragIndex < static_cast<int>(pts.size()))
     {
         pts[dragIndex] = e.position;
         recompute();
@@ -85,7 +85,7 @@ void BestFitCanvas::recompute()
     hasSubMeans = hasParabola = false;
     lineCost = parabolaCost = 0.0f;
 
-    const int n = (int)pts.size();
+    const int n = static_cast<int>(pts.size());
     if (n >= 2)
     {
         fitLine();
@@ -101,13 +101,13 @@ void BestFitCanvas::recompute()
 
 void BestFitCanvas::fitLine()
 {
-    const int n = (int)pts.size();
+    const int n = static_cast<int>(pts.size());
 
     // Mean
     M = {0.0f, 0.0f};
     for (auto& p : pts) { M.x += p.x; M.y += p.y; }
-    M.x /= (float)n;
-    M.y /= (float)n;
+    M.x /= static_cast<float>(n);
+    M.y /= static_cast<float>(n);
 
     if (n == 2)
     {
@@ -133,7 +133,7 @@ void BestFitCanvas::fitLine()
 
         for (int i = 0; i < kSamples; ++i)
         {
-            const float a = arcStart + (float)i / (float)(kSamples - 1) * (arcEnd - arcStart);
+            const float a = arcStart + static_cast<float>(i) / static_cast<float>(kSamples - 1) * (arcEnd - arcStart);
             const float s = scoreLine(a);
             const Cand  c{s, a};
             if      (c.score < best[0].score) { best[2] = best[1]; best[1] = best[0]; best[0] = c; }
@@ -153,7 +153,7 @@ void BestFitCanvas::fitLine()
     float bestAngle = arcStart;
     for (int i = 0; i < kSamples; ++i)
     {
-        const float a = arcStart + (float)i / (float)(kSamples - 1) * (arcEnd - arcStart);
+        const float a = arcStart + static_cast<float>(i) / static_cast<float>(kSamples - 1) * (arcEnd - arcStart);
         const float s = scoreLine(a);
         if (s < bestScore) { bestScore = s; bestAngle = a; }
     }
@@ -200,9 +200,9 @@ void BestFitCanvas::fitParabola()
 
         juce::Point<float> m1{0.0f, 0.0f}, m2{0.0f, 0.0f};
         for (auto& p : s1) { m1.x += p.x; m1.y += p.y; }
-        m1.x /= (float)s1.size(); m1.y /= (float)s1.size();
+        m1.x /= static_cast<float>(s1.size()); m1.y /= static_cast<float>(s1.size());
         for (auto& p : s2) { m2.x += p.x; m2.y += p.y; }
-        m2.x /= (float)s2.size(); m2.y /= (float)s2.size();
+        m2.x /= static_cast<float>(s2.size()); m2.y /= static_cast<float>(s2.size());
 
         float c = std::max(m1.getDistanceFrom(M), m2.getDistanceFrom(M));
         if (c < 1.0f) c = 1.0f;
@@ -219,7 +219,7 @@ void BestFitCanvas::fitParabola()
 
             for (int i = 0; i < kSamples; ++i)
             {
-                const float t  = tStart + (float)i / (float)(kSamples - 1) * (tEnd - tStart);
+                const float t  = tStart + static_cast<float>(i) / static_cast<float>(kSamples - 1) * (tEnd - tStart);
                 const juce::Point<float> q1{M.x + q1AxisDir.x * t,
                                             M.y + q1AxisDir.y * t};
                 const float s = scoreBezier(m1, q1, m2);
@@ -239,7 +239,7 @@ void BestFitCanvas::fitParabola()
         // Final pass in refined range
         for (int i = 0; i < kSamples; ++i)
         {
-            const float t  = tStart + (float)i / (float)(kSamples - 1) * (tEnd - tStart);
+            const float t  = tStart + static_cast<float>(i) / static_cast<float>(kSamples - 1) * (tEnd - tStart);
             const juce::Point<float> q1{M.x + q1AxisDir.x * t,
                                         M.y + q1AxisDir.y * t};
             const float s = scoreBezier(m1, q1, m2);
@@ -275,7 +275,7 @@ float BestFitCanvas::scoreBezier(juce::Point<float> q0, juce::Point<float> q1,
     // Pre-sample the curve once, then compute min-distance for all input pts.
     juce::Point<float> samples[kBezierSamples];
     for (int i = 0; i < kBezierSamples; ++i)
-        samples[i] = evalBezier(q0, q1, q2, (float)i / (float)(kBezierSamples - 1));
+        samples[i] = evalBezier(q0, q1, q2, static_cast<float>(i) / static_cast<float>(kBezierSamples - 1));
 
     float total = 0.0f;
     for (auto& p : pts)
@@ -360,9 +360,9 @@ void BestFitCanvas::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colour(0xff1a1a2e));
 
-    const float W = (float)getWidth();
-    const float H = (float)getHeight();
-    const int   n = (int)pts.size();
+    const float W = static_cast<float>(getWidth());
+    const float H = static_cast<float>(getHeight());
+    const int   n = static_cast<int>(pts.size());
 
     if (n < 2)
     {
@@ -403,7 +403,7 @@ void BestFitCanvas::paint(juce::Graphics& g)
     g.setColour(juce::Colour(0xffef476f));
     g.fillEllipse(M.x - 6.0f, M.y - 6.0f, 12.0f, 12.0f);
     g.setFont(13.0f);
-    g.drawText("M", (int)(M.x + 8), (int)(M.y - 10), 20, 20, juce::Justification::left);
+    g.drawText("M", static_cast<int>(M.x + 8), static_cast<int>(M.y - 10), 20, 20, juce::Justification::left);
 
     // Parabola mode extras
     if (showParabola && n >= 3)
@@ -412,9 +412,9 @@ void BestFitCanvas::paint(juce::Graphics& g)
         {
             g.setColour(juce::Colour(0xffef476f));
             g.fillEllipse(M1.x - 5.0f, M1.y - 5.0f, 10.0f, 10.0f);
-            g.drawText("M1", (int)(M1.x + 6), (int)(M1.y - 10), 26, 20, juce::Justification::left);
+            g.drawText("M1", static_cast<int>(M1.x + 6), static_cast<int>(M1.y - 10), 26, 20, juce::Justification::left);
             g.fillEllipse(M2.x - 5.0f, M2.y - 5.0f, 10.0f, 10.0f);
-            g.drawText("M2", (int)(M2.x + 6), (int)(M2.y - 10), 26, 20, juce::Justification::left);
+            g.drawText("M2", static_cast<int>(M2.x + 6), static_cast<int>(M2.y - 10), 26, 20, juce::Justification::left);
         }
 
         if (hasParabola)
@@ -432,8 +432,8 @@ void BestFitCanvas::paint(juce::Graphics& g)
     g.setColour(juce::Colours::white);
     g.setFont(14.0f);
     g.drawText("S(Lbf) = " + juce::String(lineCost, 2),
-               8, (int)H - 50, 220, 20, juce::Justification::left);
+               8, static_cast<int>(H) - 50, 220, 20, juce::Justification::left);
     if (showParabola && hasParabola)
         g.drawText("S(Cbf) = " + juce::String(parabolaCost, 2),
-                   8, (int)H - 28, 220, 20, juce::Justification::left);
+                   8, static_cast<int>(H) - 28, 220, 20, juce::Justification::left);
 }

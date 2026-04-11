@@ -30,7 +30,7 @@ private:
     juce::Label       methodLabel;
     juce::TextButton  resetButton;
     juce::TextButton  muteButton  { "Mute" };
-    bool              muted       = false;
+    std::atomic<bool> muted       { false };
     juce::Slider      freqSlider;
     juce::Label       freqLabel;
     GraphComponent    graph;
