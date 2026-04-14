@@ -9,9 +9,11 @@
 #include "ProjectEC1.h"
 #include "ProjectEC2.h"
 #include "ProjectEC3.h"
+#include "ProjectGP1.h"
 
 MainComponent::MainComponent()
 {
+	projects.emplace_back(std::make_unique<ProjectGP1>());
 	projects.emplace_back(std::make_unique<ProjectEC3>());
 	projects.emplace_back(std::make_unique<ProjectEC2>());
 	projects.emplace_back(std::make_unique<ProjectEC1>());

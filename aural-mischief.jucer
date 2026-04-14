@@ -55,6 +55,17 @@
           <FILE id="tZiNE5" name="Project3Component.h" compile="0" resource="0"
                 file="Source/Project3Component.h"/>
         </GROUP>
+        <GROUP id="{GP100000-0000-0000-0000-000000000001}" name="GP-1">
+          <FILE id="gp1hdr" name="ProjectGP1.h" compile="0" resource="0" file="Source/ProjectGP1.h"/>
+          <FILE id="gp1cmp" name="ProjectGP1Component.cpp" compile="1" resource="0"
+                file="Source/ProjectGP1Component.cpp"/>
+          <FILE id="gp1cph" name="ProjectGP1Component.h" compile="0" resource="0"
+                file="Source/ProjectGP1Component.h"/>
+          <FILE id="gp1cnv" name="CatmullRomCanvas.cpp" compile="1" resource="0"
+                file="Source/CatmullRomCanvas.cpp"/>
+          <FILE id="gp1cvh" name="CatmullRomCanvas.h" compile="0" resource="0"
+                file="Source/CatmullRomCanvas.h"/>
+        </GROUP>
         <GROUP id="{EC300000-0000-0000-0000-000000000003}" name="EC-3">
           <FILE id="ec3hdr" name="ProjectEC3.h" compile="0" resource="0" file="Source/ProjectEC3.h"/>
           <FILE id="ec3cmp" name="ProjectEC3Component.cpp" compile="1" resource="0"
