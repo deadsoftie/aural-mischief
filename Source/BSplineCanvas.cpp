@@ -167,9 +167,27 @@ std::vector<std::vector<juce::Point<float>>> BSplineCanvas::computeShells(double
 
 juce::Point<float> BSplineCanvas::evalBSpline(double t) const
 {
-    auto shells = computeShells(t);
-    if (shells.empty() || shells.back().empty()) return {};
-    return shells.back()[0];
+    if (!hasValidCurve()) return {};
+    int J = findSpan(t);
+    int d = degree;
+
+    std::vector<juce::Point<float>> pts(static_cast<size_t>(d) + 1);
+    for (int i = 0; i <= d; ++i)
+        pts[static_cast<size_t>(i)] = controlPts[static_cast<size_t>(J - d + i)];
+
+    for (int p = 1; p <= d; ++p)
+    {
+        for (int j = 0; j <= d - p; ++j)
+        {
+            int    gi    = J - d + p + j;
+            double denom = knots[static_cast<size_t>(gi + d - (p - 1))] - knots[static_cast<size_t>(gi)];
+            double alpha = (std::abs(denom) < 1e-12) ? 0.0 : (t - knots[static_cast<size_t>(gi)]) / denom;
+            pts[static_cast<size_t>(j)] =
+                pts[static_cast<size_t>(j)]     * static_cast<float>(1.0 - alpha)
+              + pts[static_cast<size_t>(j) + 1] * static_cast<float>(alpha);
+        }
+    }
+    return pts[0];
 }
 
 int BSplineCanvas::pickPoint(juce::Point<float> pos) const

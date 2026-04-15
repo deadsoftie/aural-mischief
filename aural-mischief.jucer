@@ -26,6 +26,17 @@
           <FILE id="p6canvh" name="DeBoorPolyCanvas.h" compile="0" resource="0"
                 file="Source/DeBoorPolyCanvas.h"/>
         </GROUP>
+        <GROUP id="{P7000000-0000-0000-0000-000000000007}" name="Project-7">
+          <FILE id="p7hdr0" name="Project7.h" compile="0" resource="0" file="Source/Project7.h"/>
+          <FILE id="p7cmp0" name="Project7Component.cpp" compile="1" resource="0"
+                file="Source/Project7Component.cpp"/>
+          <FILE id="p7cmph" name="Project7Component.h" compile="0" resource="0"
+                file="Source/Project7Component.h"/>
+          <FILE id="p7canv" name="BSplineCanvas.cpp" compile="1" resource="0"
+                file="Source/BSplineCanvas.cpp"/>
+          <FILE id="p7canvh" name="BSplineCanvas.h" compile="0" resource="0"
+                file="Source/BSplineCanvas.h"/>
+        </GROUP>
         <GROUP id="{A1B2C3D4-EF56-7890-ABCD-EF1234567890}" name="Project-5">
           <FILE id="p5hdrA" name="Project5.h" compile="0" resource="0" file="Source/Project5.h"/>
           <FILE id="p5cmpA" name="Project5Component.cpp" compile="1" resource="0"
