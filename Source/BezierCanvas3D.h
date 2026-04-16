@@ -48,6 +48,20 @@ public:
     void resetCamera();
     void resetToDefaultIfEmpty();
 
+    // Point access — used by the coord panel
+    int     getPointCount()          const noexcept { return static_cast<int>(controlPoints.size()); }
+    Point3D getPoint(int i)          const noexcept;
+    void    setPoint(int i, Point3D p)     noexcept;  // sets value + repaints, no callback
+
+    // Currently selected point index (-1 = none); persists after mouse release
+    int getSelectedIndex() const noexcept { return selectedIndex; }
+
+    // Fired when the selected point index changes (index == -1 means deselected)
+    std::function<void(int index)>              onSelectionChanged;
+
+    // Fired each time the selected point moves (drag or setPoint won't fire this)
+    std::function<void(int index, Point3D pos)> onPointChanged;
+
     void paint           (juce::Graphics& g)                              override;
     void mouseDown       (const juce::MouseEvent& e)                      override;
     void mouseDrag       (const juce::MouseEvent& e)                      override;
@@ -62,43 +76,38 @@ private:
     double t      = 0.5;
 
     std::vector<Point3D>             controlPoints;
-    std::vector<std::vector<double>> choose;          // Pascal triangle
+    std::vector<std::vector<double>> choose;
 
-    void    buildChooseTable(int maxDegree);
+    void buildChooseTable(int maxDegree);
 
     // ----- Camera -----
-    float   camAzimuth   =  0.4f;    // radians (horizontal orbit)
-    float   camElevation =  0.35f;   // radians (vertical orbit)
+    float   camAzimuth   =  0.4f;
+    float   camElevation =  0.35f;
     float   camDistance  = 10.0f;
     Point3D camPivot     = { 0.0f, 0.0f, 0.0f };
 
-    // Returns eye position in world space
     Point3D getEye() const noexcept;
+    void    getCameraAxes(Point3D& right, Point3D& up, Point3D& fwd) const noexcept;
 
-    // Fills right/up/fwd unit vectors for current camera state
-    void getCameraAxes(Point3D& right, Point3D& up, Point3D& fwd) const noexcept;
-
-    // Project world point → screen; returns false if behind camera
     bool projectPoint(Point3D p,
                       Point3D eyePos, Point3D right, Point3D up, Point3D fwd,
                       float focalLen, float cx, float cy,
                       juce::Point<float>& out) const noexcept;
 
-    // Convenience overload that recomputes camera state (used in mouse handlers)
     bool projectPointFull(Point3D p, juce::Point<float>& out) const noexcept;
 
-    // ----- Mouse interaction state -----
-    int               dragIndex    = -1;
-    bool              orbitDragging = false;
+    // ----- Interaction state -----
+    int               selectedIndex  = -1;   // persists across mouse up
+    int               dragIndex      = -1;   // cleared on mouseUp
+    bool              orbitDragging  = false;
     juce::Point<float> lastMousePos;
 
     static constexpr float hitRadius = 12.0f;
 
-    // Returns index of control point closest to screen pos, or -1
-    int  pickPoint(juce::Point<float> screenPos) const noexcept;
-
-    // Unproject screen click onto the world Y = 0 plane
+    int     pickPoint(juce::Point<float> screenPos) const noexcept;
     Point3D unprojectToGroundPlane(juce::Point<float> screenPos) const noexcept;
+
+    void setSelectedIndex(int idx);  // updates selectedIndex + fires callback if changed
 
     // ----- Evaluation -----
     Point3D evalNLI3D(double tt,

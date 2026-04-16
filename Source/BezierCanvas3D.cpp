@@ -38,7 +38,35 @@ void BezierCanvas3D::clearPoints()
 {
     controlPoints.clear();
     dragIndex = -1;
+    setSelectedIndex(-1);
     repaint();
+}
+
+// ---------------------------------------------------------------------------
+// Point access
+// ---------------------------------------------------------------------------
+Point3D BezierCanvas3D::getPoint(int i) const noexcept
+{
+    if (i < 0 || i >= static_cast<int>(controlPoints.size())) return {};
+    return controlPoints[static_cast<size_t>(i)];
+}
+
+void BezierCanvas3D::setPoint(int i, Point3D p) noexcept
+{
+    if (i < 0 || i >= static_cast<int>(controlPoints.size())) return;
+    controlPoints[static_cast<size_t>(i)] = p;
+    repaint();
+}
+
+// ---------------------------------------------------------------------------
+// Selection helper
+// ---------------------------------------------------------------------------
+void BezierCanvas3D::setSelectedIndex(int idx)
+{
+    if (idx == selectedIndex) return;
+    selectedIndex = idx;
+    if (onSelectionChanged)
+        onSelectionChanged(selectedIndex);
 }
 
 void BezierCanvas3D::resetCamera()
@@ -444,7 +472,7 @@ void BezierCanvas3D::paint(juce::Graphics& g)
         juce::Point<float> sp;
         if (!proj(controlPoints[static_cast<size_t>(i)], sp)) continue;
 
-        g.setColour(i == dragIndex ? juce::Colours::yellow : juce::Colours::cyan);
+        g.setColour(i == selectedIndex ? juce::Colours::yellow : juce::Colours::cyan);
         g.fillEllipse(sp.x - 6.0f, sp.y - 6.0f, 12.0f, 12.0f);
 
         g.setColour(juce::Colours::white.withAlpha(0.85f));
@@ -498,12 +526,18 @@ void BezierCanvas3D::mouseDown(const juce::MouseEvent& e)
 
     dragIndex = pickPoint(e.position);
 
-    if (dragIndex < 0)
+    if (dragIndex >= 0)
+    {
+        setSelectedIndex(dragIndex);
+    }
+    else
     {
         const int maxPts = degree + 1;
         if (static_cast<int>(controlPoints.size()) < maxPts)
         {
             controlPoints.push_back(unprojectToGroundPlane(e.position));
+            dragIndex = static_cast<int>(controlPoints.size()) - 1;
+            setSelectedIndex(dragIndex);
             repaint();
         }
     }
@@ -548,6 +582,9 @@ void BezierCanvas3D::mouseDrag(const juce::MouseEvent& e)
             pt.y += dx * scale * axRight.y - dy * scale * axUp.y;
             pt.z += dx * scale * axRight.z - dy * scale * axUp.z;
         }
+
+        if (onPointChanged)
+            onPointChanged(dragIndex, controlPoints[static_cast<size_t>(dragIndex)]);
 
         repaint();
     }
