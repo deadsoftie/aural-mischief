@@ -7,6 +7,7 @@
 #include "Project5.h"
 #include "Project6.h"
 #include "Project7.h"
+#include "Project8.h"
 #include "ProjectEC1.h"
 #include "ProjectEC2.h"
 #include "ProjectEC3.h"
@@ -14,6 +15,7 @@
 
 MainComponent::MainComponent()
 {
+	projects.emplace_back(std::make_unique<Project8>());
 	projects.emplace_back(std::make_unique<Project7>());
 	projects.emplace_back(std::make_unique<ProjectGP1>());
 	projects.emplace_back(std::make_unique<ProjectEC3>());
