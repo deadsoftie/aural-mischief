@@ -9,7 +9,6 @@ public:
     void setDegree(int d);
     void setT(double t);
     void clearPoints();
-    void applyClampedPreset();
     void setKnotsFromString(const juce::String& s);
 
     juce::String getKnotString() const;

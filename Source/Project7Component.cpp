@@ -35,14 +35,6 @@ Project7Component::Project7Component()
         refreshKnotDisplay();
     };
 
-    clampedButton.setButtonText("Clamped Preset");
-    clampedButton.onClick = [this]()
-    {
-        canvas.applyClampedPreset();
-        refreshSliderRange();
-        refreshKnotDisplay();
-    };
-
     clearButton.setButtonText("Clear");
     clearButton.onClick = [this]()
     {
@@ -59,7 +51,6 @@ Project7Component::Project7Component()
     addAndMakeVisible(tSlider);
     addAndMakeVisible(knotLabel);
     addAndMakeVisible(knotEditor);
-    addAndMakeVisible(clampedButton);
     addAndMakeVisible(clearButton);
     addAndMakeVisible(canvas);
 
@@ -99,12 +90,10 @@ void Project7Component::resized()
 
     auto area = getLocalBounds().reduced(pad);
 
-    // Row 1: degree + clamped + clear
+    // Row 1: degree + clear
     auto row1 = area.removeFromTop(row1H);
     degreeLabel .setBounds(row1.removeFromLeft(52));
     degreeSlider.setBounds(row1.removeFromLeft(200));
-    row1.removeFromLeft(8);
-    clampedButton.setBounds(row1.removeFromLeft(120));
     row1.removeFromLeft(8);
     clearButton  .setBounds(row1.removeFromLeft(70));
 

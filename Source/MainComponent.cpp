@@ -14,11 +14,11 @@
 
 MainComponent::MainComponent()
 {
+	projects.emplace_back(std::make_unique<Project7>());
 	projects.emplace_back(std::make_unique<ProjectGP1>());
 	projects.emplace_back(std::make_unique<ProjectEC3>());
 	projects.emplace_back(std::make_unique<ProjectEC2>());
 	projects.emplace_back(std::make_unique<ProjectEC1>());
-	projects.emplace_back(std::make_unique<Project7>());
 	projects.emplace_back(std::make_unique<Project6>());
 	projects.emplace_back(std::make_unique<Project5>());
 	projects.emplace_back(std::make_unique<Project4>());

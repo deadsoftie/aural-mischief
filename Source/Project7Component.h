@@ -19,7 +19,6 @@ private:
     juce::Label      knotLabel;
     juce::TextEditor knotEditor;
 
-    juce::TextButton clampedButton;
     juce::TextButton clearButton;
 
     BSplineCanvas canvas;

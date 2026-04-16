@@ -25,29 +25,6 @@ void BSplineCanvas::clearPoints()
     repaint();
 }
 
-void BSplineCanvas::applyClampedPreset()
-{
-    int s = static_cast<int>(controlPts.size()) - 1;
-    int d = degree;
-    if (s < d + 1) return;   // need at least d+2 points
-
-    int k = s - d;
-    knots.clear();
-
-    for (int i = 0; i <= d; ++i)
-        knots.push_back(0.0);
-
-    for (int i = 1; i <= k - 1; ++i)
-        knots.push_back(static_cast<double>(i));
-
-    for (int i = 0; i <= d; ++i)
-        knots.push_back(static_cast<double>(k));
-
-    tParam = 0.0;
-    if (onStateChanged) onStateChanged();
-    repaint();
-}
-
 void BSplineCanvas::setKnotsFromString(const juce::String& str)
 {
     auto tokens = juce::StringArray::fromTokens(str, ",", "");
@@ -81,10 +58,11 @@ void BSplineCanvas::setKnotsFromString(const juce::String& str)
 juce::String BSplineCanvas::getKnotString() const
 {
     juce::String s;
-    for (int i = 0; i < static_cast<int>(knots.size()); ++i)
+    bool first = true;
+    for (double v : knots)
     {
-        if (i > 0) s += ", ";
-        double v = knots[static_cast<size_t>(i)];
+        if (!first) s += ", ";
+        first = false;
         if (std::abs(v - std::round(v)) < 1e-9)
             s += juce::String(static_cast<int>(std::round(v)));
         else
@@ -216,6 +194,7 @@ void BSplineCanvas::mouseDown(const juce::MouseEvent& e)
     if (dragIndex < 0)
     {
         controlPts.emplace_back(e.position);
+        dragIndex = static_cast<int>(controlPts.size()) - 1;
         buildDefaultKnots();
         tParam = getTMin();
         if (onStateChanged) onStateChanged();
